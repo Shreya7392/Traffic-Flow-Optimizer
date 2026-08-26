@@ -66,11 +66,9 @@ export function Ambulances() {
   const queryClient = useQueryClient();
   const { data: ambulancesData, isLoading: loadingAmbulances } = useListAmbulances();
 
-  const ambulances = Array.isArray(ambulancesData)
-    ? ambulancesData
-    : ambulancesData?.data || [];
+  const ambulances = ambulancesData ?? [];
   const { data: roadsData } = useListRoads();
-  const roads = Array.isArray(roadsData) ? roadsData : roadsData?.data || [];
+  const roads = roadsData ?? [];
   const dispatchAmbulance = useDispatchAmbulance();
   const resolveAmbulance = useResolveAmbulance();
   const computeSignals = useComputeSignals();
@@ -94,7 +92,7 @@ export function Ambulances() {
       {
         onSuccess: (result) => {
           queryClient.invalidateQueries({ queryKey: getListAmbulancesQueryKey() });
-          computeSignals.mutate({});
+          computeSignals.mutate();
           setSelectedRoadId("");
           // Store route for immediate display
           setLastRoute({
@@ -116,7 +114,7 @@ export function Ambulances() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListAmbulancesQueryKey() });
-          computeSignals.mutate({});
+          computeSignals.mutate();
           if (viewingRouteId === id) {
             setViewingRouteId(null);
             setLastRoute(null);

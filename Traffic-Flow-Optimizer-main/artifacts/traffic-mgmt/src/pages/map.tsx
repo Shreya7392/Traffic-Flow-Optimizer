@@ -113,24 +113,16 @@ export function LucknowMap() {
   const [, setLocation] = useLocation();
   // ✅ SAFE DATA HANDLING
   const { data: intersectionsData, isLoading: loadingIntersections } = useListIntersections();
-  const intersections = Array.isArray(intersectionsData)
-    ? intersectionsData
-    : intersectionsData?.data || [];
+  const intersections = intersectionsData ?? [];
 
   const { data: hospitalsData, isLoading: loadingHospitals } = useListHospitals();
-  const hospitals = Array.isArray(hospitalsData)
-    ? hospitalsData
-    : hospitalsData?.data || [];
+  const hospitals = hospitalsData ?? [];
 
   const { data: signalsData, isLoading: loadingSignals } = useListSignals();
-  const signals = Array.isArray(signalsData)
-    ? signalsData
-    : signalsData?.data || [];
+  const signals = signalsData ?? [];
 
   const { data: roadsData, isLoading: loadingRoads } = useListRoads();
-  const roads = Array.isArray(roadsData)
-    ? roadsData
-    : roadsData?.data || [];
+  const roads = roadsData ?? [];
 
   // Debug logging
   useEffect(() => {
@@ -192,7 +184,7 @@ export function LucknowMap() {
         onSuccess: (result) => {
           qc.invalidateQueries({ queryKey: getListAmbulancesQueryKey() });
           compute.mutate(
-            {},
+            undefined,
             {
               onSuccess: () => {
                 qc.invalidateQueries({ queryKey: getListSignalsQueryKey() });
@@ -271,7 +263,7 @@ export function LucknowMap() {
         <Button variant="secondary" size="sm" disabled={compute.isPending}
           onClick={() => {
           compute.mutate(
-            {},
+            undefined,
             {
               onSuccess: () => {
                 qc.invalidateQueries({ queryKey: getListSignalsQueryKey() });

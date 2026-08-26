@@ -451,10 +451,14 @@ components:
           type: string
         location:
           type: string
+        lat:
+          type: number
+        lng:
+          type: number
         createdAt:
           type: string
           format: date-time
-      required: [id, name, location, createdAt]
+      required: [id, name, location, lat, lng, createdAt]
 
     IntersectionDetail:
       type: object
@@ -465,6 +469,10 @@ components:
           type: string
         location:
           type: string
+        lat:
+          type: number
+        lng:
+          type: number
         roads:
           type: array
           items:
@@ -476,7 +484,7 @@ components:
         createdAt:
           type: string
           format: date-time
-      required: [id, name, location, roads, signals, createdAt]
+      required: [id, name, location, lat, lng, roads, signals, createdAt]
 
     CreateIntersectionBody:
       type: object
@@ -485,6 +493,14 @@ components:
           type: string
         location:
           type: string
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+        lng:
+          type: number
+          minimum: -180
+          maximum: 180
       required: [name, location]
 
     Road:
@@ -564,12 +580,16 @@ components:
           type: string
         location:
           type: string
+        lat:
+          type: number
+        lng:
+          type: number
         nearestIntersectionId:
           type: integer
         createdAt:
           type: string
           format: date-time
-      required: [id, name, location, nearestIntersectionId, createdAt]
+      required: [id, name, location, lat, lng, nearestIntersectionId, createdAt]
 
     CreateHospitalBody:
       type: object
@@ -578,6 +598,14 @@ components:
           type: string
         location:
           type: string
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+        lng:
+          type: number
+          minimum: -180
+          maximum: 180
         nearestIntersectionId:
           type: integer
       required: [name, location, nearestIntersectionId]

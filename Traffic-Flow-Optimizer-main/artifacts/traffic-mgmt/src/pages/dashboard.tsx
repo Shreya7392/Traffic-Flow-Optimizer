@@ -12,9 +12,7 @@ export function Dashboard() {
   const { data: signalsData, isLoading: signalsLoading } = useListSignals();
 
   // Safe data extraction
-  const signals = Array.isArray(signalsData)
-    ? signalsData
-    : signalsData?.data || [];
+  const signals = signalsData ?? [];
 
   // Debug logging
   useEffect(() => {

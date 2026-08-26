@@ -13,7 +13,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -25,6 +25,16 @@ const navigation = [
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const [location] = useLocation();
+  const [simulating, setSimulating] = useState(false);
+
+  const simulateTraffic = async () => {
+    setSimulating(true);
+    try {
+      await fetch("http://localhost:3000/api/simulation/tick", { method: "POST" });
+    } finally {
+      setSimulating(false);
+    }
+  };
 
   return (
     <SidebarProvider defaultOpen>
@@ -78,6 +88,9 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <span className="inline-block w-2 h-2 rounded-full bg-chart-1 animate-pulse" />
               SYSTEM ONLINE
             </div>
+            <button onClick={simulateTraffic} disabled={simulating} className="ml-auto text-[10px] font-bold uppercase tracking-widest border border-border rounded px-3 py-1.5 hover:border-primary hover:text-primary disabled:opacity-50">
+              {simulating ? "Updating traffic..." : "Simulate traffic"}
+            </button>
           </header>
           <main className="flex-1 overflow-y-auto p-6 relative">
             <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-50 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />

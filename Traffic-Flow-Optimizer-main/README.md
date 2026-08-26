@@ -20,6 +20,26 @@ A monorepo project for optimizing traffic flow management with a React frontend 
 pnpm install
 ```
 
+## Database configuration
+
+The API requires PostgreSQL. Copy `artifacts/api-server/.env.example` to `artifacts/api-server/.env`, then adjust the connection string if needed:
+
+```env
+DATABASE_URL=postgresql://USERNAME:PASSWORD@localhost:5432/traffic_db
+```
+
+For a ready-to-use local database, run:
+
+```bash
+docker compose up -d postgres
+```
+
+Set up the database schema before starting the API:
+
+```bash
+pnpm --filter @workspace/db run push
+```
+
 ## Development
 
 ### Frontend
@@ -33,6 +53,8 @@ pnpm dev
 cd artifacts/api-server
 pnpm dev
 ```
+
+The API runs on port `3000` by default. Set `PORT` to use a different port.
 
 ## Build
 

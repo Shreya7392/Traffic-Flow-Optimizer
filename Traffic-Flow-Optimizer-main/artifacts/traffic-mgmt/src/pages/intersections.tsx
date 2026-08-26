@@ -4,6 +4,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   useListIntersections,
   getListIntersectionsQueryKey,
+  useCreateIntersection,
+  useDeleteIntersection,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,16 +33,36 @@ import {
 export function Intersections() {
   const queryClient = useQueryClient();
   const { data: intersectionsData, isLoading } = useListIntersections();
-  const intersections = Array.isArray(intersectionsData)
-    ? intersectionsData
-    : intersectionsData?.data || [];
+  const intersections = intersectionsData ?? [];
+  const createIntersection = useCreateIntersection();
+  const deleteIntersection = useDeleteIntersection();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newLocation, setNewLocation] = useState("");
+  const [newLat, setNewLat] = useState("26.8467");
+  const [newLng, setNewLng] = useState("80.9462");
 
   const handleCreate = () => {
-    alert("Create disabled for now");
+    if (!newName || !newLocation) return;
+    createIntersection.mutate(
+      { data: { name: newName, location: newLocation, lat: Number(newLat), lng: Number(newLng) } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListIntersectionsQueryKey() });
+          setIsCreateOpen(false);
+          setNewName("");
+          setNewLocation("");
+        },
+      },
+    );
+  };
+
+  const handleDelete = (id: number) => {
+    if (!window.confirm("Delete this intersection and all of its roads?")) return;
+    deleteIntersection.mutate({ id }, {
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: getListIntersectionsQueryKey() }),
+    });
   };
 
   return (
@@ -75,6 +97,16 @@ export function Intersections() {
                   className="font-mono text-sm"
                 />
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="lat" className="uppercase text-xs font-bold text-muted-foreground">Latitude</Label>
+                  <Input id="lat" type="number" step="any" value={newLat} onChange={(e) => setNewLat(e.target.value)} className="font-mono text-sm" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lng" className="uppercase text-xs font-bold text-muted-foreground">Longitude</Label>
+                  <Input id="lng" type="number" step="any" value={newLng} onChange={(e) => setNewLng(e.target.value)} className="font-mono text-sm" />
+                </div>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="location" className="uppercase text-xs font-bold text-muted-foreground">Location / Coordinates</Label>
                 <Input
@@ -88,8 +120,8 @@ export function Intersections() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsCreateOpen(false)} className="uppercase text-xs font-bold">Cancel</Button>
-              <Button onClick={handleCreate} disabled={!newName || !newLocation}>
-                Create Node
+              <Button onClick={handleCreate} disabled={!newName || !newLocation || !Number.isFinite(Number(newLat)) || !Number.isFinite(Number(newLng)) || createIntersection.isPending}>
+                {createIntersection.isPending ? "Creating..." : "Create Node"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -144,7 +176,8 @@ export function Intersections() {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-all"
-                          disabled={false}
+                          onClick={() => handleDelete(intersection.id)}
+                          disabled={deleteIntersection.isPending}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

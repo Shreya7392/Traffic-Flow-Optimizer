@@ -50,7 +50,7 @@ export function IntersectionDetail() {
         onSuccess: () => {
           setNewRoadName("");
           invalidateData();
-          computeSignals.mutate({}, { onSuccess: invalidateData });
+          computeSignals.mutate(undefined, { onSuccess: invalidateData });
         },
       }
     );
@@ -60,7 +60,7 @@ export function IntersectionDetail() {
     deleteRoad.mutate({ id: roadId }, {
       onSuccess: () => {
         invalidateData();
-        computeSignals.mutate({}, { onSuccess: invalidateData });
+        computeSignals.mutate(undefined, { onSuccess: invalidateData });
       }
     });
   };
@@ -72,7 +72,7 @@ export function IntersectionDetail() {
       {
         onSuccess: () => {
           invalidateData();
-          computeSignals.mutate({}, { onSuccess: invalidateData });
+          computeSignals.mutate(undefined, { onSuccess: invalidateData });
         }
       }
     );
@@ -111,7 +111,7 @@ export function IntersectionDetail() {
         </div>
         <Button
           variant="secondary"
-          onClick={() => computeSignals.mutate({}, { onSuccess: invalidateData })}
+          onClick={() => computeSignals.mutate(undefined, { onSuccess: invalidateData })}
           disabled={computeSignals.isPending}
           className="uppercase text-xs font-bold tracking-wider"
         >

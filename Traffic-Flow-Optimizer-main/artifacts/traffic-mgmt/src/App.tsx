@@ -11,6 +11,8 @@ import { IntersectionDetail } from "./pages/intersection-detail";
 import { Ambulances } from "./pages/ambulances";
 import { Hospitals } from "./pages/hospitals";
 import { LucknowMap } from "./pages/map";
+import { LiveSync } from "./components/live-sync";
+import { AuthGate } from "./components/auth-gate";
 
 // Set API base URL
 setBaseUrl("http://localhost:3000");
@@ -42,12 +44,13 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthGate><LiveSync />
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
           <Router />
         </WouterRouter>
         <Toaster />
-      </TooltipProvider>
+      </TooltipProvider></AuthGate>
     </QueryClientProvider>
   );
 }

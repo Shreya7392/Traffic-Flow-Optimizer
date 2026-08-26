@@ -28,14 +28,10 @@ import {
 export function Hospitals() {
   const queryClient = useQueryClient();
   const { data: hospitalsData, isLoading: loadingHospitals } = useListHospitals();
-  const hospitals = Array.isArray(hospitalsData)
-    ? hospitalsData
-    : hospitalsData?.data || [];
+  const hospitals = hospitalsData ?? [];
 
   const { data: intersectionsData } = useListIntersections();
-  const intersections = Array.isArray(intersectionsData)
-    ? intersectionsData
-    : intersectionsData?.data || [];
+  const intersections = intersectionsData ?? [];
   const createHospital = useCreateHospital();
   const deleteHospital = useDeleteHospital();
 
@@ -43,6 +39,8 @@ export function Hospitals() {
   const [newName, setNewName] = useState("");
   const [newLocation, setNewLocation] = useState("");
   const [newIntersectionId, setNewIntersectionId] = useState("");
+  const [newLat, setNewLat] = useState("26.8467");
+  const [newLng, setNewLng] = useState("80.9462");
 
   const handleCreate = () => {
     if (!newName || !newLocation || !newIntersectionId) return;
@@ -52,6 +50,8 @@ export function Hospitals() {
           name: newName,
           location: newLocation,
           nearestIntersectionId: parseInt(newIntersectionId, 10),
+          lat: Number(newLat),
+          lng: Number(newLng),
         },
       },
       {
@@ -109,6 +109,16 @@ export function Hospitals() {
                   className="font-mono text-sm"
                 />
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="hospital-lat" className="uppercase text-xs font-bold text-muted-foreground">Latitude</Label>
+                  <Input id="hospital-lat" type="number" step="any" value={newLat} onChange={(e) => setNewLat(e.target.value)} className="font-mono text-sm" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="hospital-lng" className="uppercase text-xs font-bold text-muted-foreground">Longitude</Label>
+                  <Input id="hospital-lng" type="number" step="any" value={newLng} onChange={(e) => setNewLng(e.target.value)} className="font-mono text-sm" />
+                </div>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="location" className="uppercase text-xs font-bold text-muted-foreground">Location</Label>
                 <Input
@@ -140,7 +150,7 @@ export function Hospitals() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsCreateOpen(false)} className="uppercase text-xs font-bold">Cancel</Button>
-              <Button onClick={handleCreate} disabled={!newName || !newLocation || !newIntersectionId || createHospital.isPending} className="uppercase text-xs font-bold">
+              <Button onClick={handleCreate} disabled={!newName || !newLocation || !newIntersectionId || !Number.isFinite(Number(newLat)) || !Number.isFinite(Number(newLng)) || createHospital.isPending} className="uppercase text-xs font-bold">
                 {createHospital.isPending ? "Registering..." : "Register"}
               </Button>
             </DialogFooter>
